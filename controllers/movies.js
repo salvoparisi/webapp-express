@@ -1,7 +1,7 @@
 const connection = require('../data/db.js')
 
 const index = (req, res) => {
-    const sql = 'SELECT * FROM post_tag.posts'
+    const sql = 'SELECT * FROM `db-webapp`.movies'
 
     connection.query(sql, (err, results) => {
         if (err) {
@@ -20,9 +20,9 @@ const index = (req, res) => {
 
 const show = (req, res) => {
     const id = req.params.id
-    const sql = `SELECT * FROM post_tag.posts WHERE id=${id}`
+    const sql = "SELECT * FROM `db-webapp`.movies WHERE id=?"
 
-    connection.query(sql, (err, results) => {
+    connection.query(sql, [id], (err, results) => {
         if (err) {
             console.error('Errore durante l\'esecuzione della query:', err.message);
             res.status(500).send('Errore nel server');

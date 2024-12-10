@@ -4,7 +4,7 @@ const app = express()
 const notFoundMiddleware = require('./middlewares/notFoundMiddleware.js')
 const loggerMiddleware = require('./middlewares/loggerMiddleware.js')
 const PORT = 3000
-const postsRoutes = require('./routes/posts.js')
+const postsRoutes = require('./routes/movies.js')
 
 app.use(cors())
 
