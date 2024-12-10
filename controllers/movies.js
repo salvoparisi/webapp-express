@@ -20,22 +20,46 @@ const index = (req, res) => {
 
 const show = (req, res) => {
     const id = req.params.id
-    const sql = "SELECT * FROM `db-webapp`.movies WHERE id=?"
 
-    connection.query(sql, [id], (err, results) => {
+    const sqlMovie = "SELECT * FROM `db-webapp`.movies WHERE id=?"
+    const sqlReviews = `
+        SELECT reviews.*
+        FROM \`db-webapp\`.movies
+        JOIN \`db-webapp\`.reviews
+        ON reviews.movie_id = movies.id
+        WHERE movies.id = ?
+    `
+
+
+    connection.query(sqlMovie, [id], (err, movieResults) => {
         if (err) {
-            console.error('Errore durante l\'esecuzione della query:', err.message);
+            console.error('Errore durante l\'esecuzione della query del film:', err.message);
             res.status(500).send('Errore nel server');
             return;
         }
-        if (results.length == 0) {
-            res.status(404).send(`Nessun elemento trovato con ID ${id}`)
-            return
+
+        if (movieResults.length === 0) {
+            res.status(404).send(`Nessun film trovato con ID ${id}`);
+            return;
         }
 
-        res.json(results);
+        connection.query(sqlReviews, [id], (err, reviewResults) => {
+            if (err) {
+                console.error('Errore durante l\'esecuzione della query delle recensioni:', err.message);
+                res.status(500).send('Errore nel server');
+                return;
+            }
+
+            const response = {
+                movie: movieResults[0],
+                reviews: reviewResults
+            };
+
+            res.json(response);
+        });
     });
-}
+};
+
 
 
 module.exports = {
