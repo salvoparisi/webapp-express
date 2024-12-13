@@ -19,17 +19,10 @@ const index = (req, res) => {
 }
 
 const show = (req, res) => {
-    const id = req.params.id
+    const id = req.params.id;
 
-    const sqlMovie = "SELECT * FROM `db-webapp`.movies WHERE id=?"
-    const sqlReviews = `
-        SELECT reviews.*
-        FROM \`db-webapp\`.movies
-        JOIN \`db-webapp\`.reviews
-        ON reviews.movie_id = movies.id
-        WHERE movies.id = ?
-    `
-
+    const sqlMovie = "SELECT * FROM `db-webapp`.movies WHERE id=?";
+    const sqlReviews = "SELECT * FROM `db-webapp`.reviews WHERE movie_id=?";
 
     connection.query(sqlMovie, [id], (err, movieResults) => {
         if (err) {
@@ -43,6 +36,8 @@ const show = (req, res) => {
             return;
         }
 
+        const movie = movieResults[0];
+
         connection.query(sqlReviews, [id], (err, reviewResults) => {
             if (err) {
                 console.error('Errore durante l\'esecuzione della query delle recensioni:', err.message);
@@ -51,7 +46,7 @@ const show = (req, res) => {
             }
 
             const response = {
-                movie: movieResults[0],
+                ...movie,
                 reviews: reviewResults
             };
 
@@ -59,6 +54,7 @@ const show = (req, res) => {
         });
     });
 };
+
 
 
 
