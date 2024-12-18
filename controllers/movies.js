@@ -22,7 +22,7 @@ const show = (req, res) => {
     const id = req.params.id;
 
     const sqlMovie = "SELECT * FROM `db-webapp`.movies WHERE id=?";
-    const sqlReviews = "SELECT * FROM `db-webapp`.reviews WHERE movie_id=?";
+    const sqlReviews = "SELECT * FROM `db-webapp`.reviews WHERE movie_id=? ORDER BY created_at DESC";
 
     connection.query(sqlMovie, [id], (err, movieResults) => {
         if (err) {
@@ -55,10 +55,25 @@ const show = (req, res) => {
     });
 };
 
+const reviews = (req, res) => {
+
+    movie_id = req.params.id
+    const { name, vote, text } = req.body
+    const created_at = new Date()
+
+    const sql = "INSERT INTO `reviews` SET name=?, text=?, vote=?, movie_id=?, created_at=?"
+
+    connection.query(sql, [name, text, vote, movie_id, created_at], (err, result) => {
+        if (err) return res.status(500).json({ error: err })
+        return res.status(201).json({ success: true })
+    })
+}
+
 
 
 
 module.exports = {
     index,
     show,
+    reviews
 }
